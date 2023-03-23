@@ -26,6 +26,22 @@
             object-fit: cover;
         }
 
+        .image-hidden{
+            display: none;
+            position: relative;
+            overflow: hidden;
+            padding-top: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+        }
+
+        .image-hidden img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
         /* .camera-view-placeholder, .image-placeholder{
             background-color: black;
         } */
@@ -42,10 +58,6 @@
                 <div class="camera-container align-middle">
                     <video id="camera-view" class="camera-view-placeholder"></video>
                     <canvas id="canvas"></canvas>
-                </div>
-
-                <div>
-                    <button id="test-button">test</button>
                 </div>
             </div>
 
@@ -75,7 +87,30 @@
             </div>
         </div>
     </div>
-
+    <div class="col-md-9 align-items-center">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="image-hidden">
+                    <img id="image-h1" class="image-placeholder">
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="image-hidden">
+                    <img id="image-h2" class="image-placeholder">
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="image-hidden">
+                    <img id="image-h3" class="image-placeholder">
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="image-hidden">
+                    <img id="image-h4" class="image-placeholder">
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         // Get the saved camera setting from local storage
         var savedCameraSetting = localStorage.getItem("camera");
@@ -114,24 +149,64 @@
             canvas.height = video.videoHeight;
         });
 
-        document.getElementById('test-button').addEventListener('click', () => {
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space') {
+                // perform some action here
+                console.log('The spacebar was pressed!');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            let imageDataUrl = canvas.toDataURL();
-            if (count == 0){
-                document.getElementById('image-1').src = imageDataUrl;
-            } else if (count == 1){
-                document.getElementById('image-2').src = imageDataUrl;
-            } else if (count == 2){
-                document.getElementById('image-3').src = imageDataUrl;
-            } else if (count == 3){
-                document.getElementById('image-4').src = imageDataUrl;
-                ajControl(imageDataUrl);
+                const imageDataUrl = canvas.toDataURL();
+
+                if (count == 0){
+                    document.getElementById('image-1').src = imageDataUrl;
+                    document.getElementById('image-h1').src = imageDataUrl;
+                } else if (count == 1){
+                    document.getElementById('image-2').src = imageDataUrl;
+                    document.getElementById('image-h2').src = imageDataUrl;
+                } else if (count == 2){
+                    document.getElementById('image-3').src = imageDataUrl;
+                    document.getElementById('image-h3').src = imageDataUrl;
+                } else if (count == 3){
+                    document.getElementById('image-4').src = imageDataUrl;
+                    document.getElementById('image-h4').src = imageDataUrl;
+                    setTimeout(function() {
+                        saveImagesToStorage();
+                        stripsGenerator();
+                    }, 1000);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 5000);
+                }
+                count++;
+            }
+        });
+
+        function stripsGenerator() {
+            const images = document.querySelectorAll('.image-hidden img');
+            const cv2 = document.createElement('canvas');
+
+            cv2.width = images[0].width;
+            cv2.height = images[0].height * images.length;
+
+            let x = 0;
+            for (let i = 0; i < images.length; i++) {
+                const img = images[i];
+                cv2.getContext('2d').drawImage(img, 0, x, img.width, img.height);
+                x += img.height;
             }
 
-            count++;
+            cv2.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'imagestr5.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        }
 
-        });
 
         function saveImagesToStorage(){
             imageContainers.forEach(function(imageContainer, index) {
@@ -144,5 +219,7 @@
                 document.body.removeChild(a);
             })
         }
+
+        
     </script>
 @endsection
