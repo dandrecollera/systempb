@@ -54,6 +54,17 @@
             background-image: url("/img/strip.png");
             background-size: cover;
         }
+
+        .countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px black;
+        }
     </style>
 @endsection
 
@@ -67,6 +78,7 @@
                 <div class="camera-container align-middle">
                     <video id="camera-view" class="camera-view-placeholder"></video>
                     <canvas id="canvas"></canvas>
+                    <p id="countdown" class="countdown"></p>
                 </div>
             </div>
 
@@ -161,33 +173,45 @@
 
         document.addEventListener('keydown', function(event) {
             if (event.code === 'Space') {
-                // perform some action here
-                console.log('The spacebar was pressed!');
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                let countdownNums = 5;
+                const countContainer = document.getElementById("countdown");
+                countContainer.style.display = "block";
+                countContainer.innerText = countdownNums;
+                const interval = setInterval(() => {
+                    countdownNums--;
+                    countContainer.innerText = countdownNums;
+                    if(countdownNums === 0){
+                        clearInterval(interval);
+                        countContainer.style.display = "none";
+                        console.log('The spacebar was pressed!');
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-                const imageDataUrl = canvas.toDataURL();
+                        const imageDataUrl = canvas.toDataURL();
 
-                if (count == 0){
-                    document.getElementById('image-1').src = imageDataUrl;
-                    document.getElementById('image-h1').src = imageDataUrl;
-                } else if (count == 1){
-                    document.getElementById('image-2').src = imageDataUrl;
-                    document.getElementById('image-h2').src = imageDataUrl;
-                } else if (count == 2){
-                    document.getElementById('image-3').src = imageDataUrl;
-                    document.getElementById('image-h3').src = imageDataUrl;
-                } else if (count == 3){
-                    document.getElementById('image-4').src = imageDataUrl;
-                    document.getElementById('image-h4').src = imageDataUrl;
-                    setTimeout(function() {
-                        saveImagesToStorage();
-                        stripsGenerator();
-                    }, 1000);
-                    setTimeout(function() {
-                        location.reload();
-                    }, 5000);
-                }
-                count++;
+                        if (count == 0){
+                            document.getElementById('image-1').src = imageDataUrl;
+                            document.getElementById('image-h1').src = imageDataUrl;
+                        } else if (count == 1){
+                            document.getElementById('image-2').src = imageDataUrl;
+                            document.getElementById('image-h2').src = imageDataUrl;
+                        } else if (count == 2){
+                            document.getElementById('image-3').src = imageDataUrl;
+                            document.getElementById('image-h3').src = imageDataUrl;
+                        } else if (count == 3){
+                            document.getElementById('image-4').src = imageDataUrl;
+                            document.getElementById('image-h4').src = imageDataUrl;
+                            setTimeout(function() {
+                                saveImagesToStorage();
+                                stripsGenerator();
+                            }, 1000);
+                            setTimeout(function() {
+                                location.reload();
+                            }, 5000);
+                        }
+                        count++;
+                    }
+                }, 1000);
             }
         });
 
@@ -236,6 +260,5 @@
             })
         }
 
-        
     </script>
 @endsection
