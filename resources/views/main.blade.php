@@ -4,11 +4,18 @@
 @section('styles')
     <style>
 
+        body{
+            background-image: url("/img/bg1.png");
+            background-size: cover;
+        }
+
         .camera-container, .image-container {
+            
             position: relative;
             overflow: hidden;
             padding-top: 56.25%; /* 16:9 aspect ratio */
             height: 0;
+            
         }   
 
         .image-container{
@@ -18,6 +25,7 @@
         .camera-container{}
         
         .camera-container video, .image-container img {
+            
             position: absolute;
             top: 0;
             left: 0;
@@ -42,9 +50,10 @@
             height: 100%;
             object-fit: cover;
         }
-        /* .camera-view-placeholder, .image-placeholder{
-            background-color: black;
-        } */
+        .image-placeholder{
+            background-image: url("/img/strip.png");
+            background-size: cover;
+        }
     </style>
 @endsection
 
@@ -114,6 +123,7 @@
     <script>
         // Get the saved camera setting from local storage
         var savedCameraSetting = localStorage.getItem("camera");
+        
 
         // Set the selected camera as the video source
         if (savedCameraSetting) {
@@ -196,10 +206,13 @@
             }
 
             cv2.toBlob(function(blob) {
+                var savedNumber = parseInt(localStorage.getItem("savedNumber"));
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'imagestr5.png';
+                var newnums = parseInt(savedNumber + 1);
+                a.download = 'S4M-'+ newnums +'.png';
+                localStorage.setItem('savedNumber', newnums);
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -210,10 +223,13 @@
 
         function saveImagesToStorage(){
             imageContainers.forEach(function(imageContainer, index) {
-                console.log('downloading');
+                var savedNumber = parseInt(localStorage.getItem("savedNumber"));
                 var a = document.createElement('a');
                 a.href = imageContainer.src;
-                a.download = 'image-' + (index + 1) + '.png';
+                var newnums = parseInt(savedNumber + 1);
+                console.log(savedNumber);
+                a.download = 'S4M-' + newnums + '.png';
+                localStorage.setItem('savedNumber', newnums);
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);

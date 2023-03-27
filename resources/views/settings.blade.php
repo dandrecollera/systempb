@@ -14,10 +14,18 @@
     </select>
     <button id="save-button">Save Settings</button>
 
-
-
+	<h1>Numbering</h1>
+	<input type="number" id="number-count" value="">
+	<button id="number-save">Save</button>
     <script>
         $(document).ready(function() {
+
+			const $numberInput = $('#number-count');
+			const $saveButton = $('#number-save');
+			const savedNumber = localStorage.getItem('savedNumber');
+			if (savedNumber) {
+				$('#number-count').val(savedNumber);
+			}
 			// Get available camera devices
 			navigator.mediaDevices.enumerateDevices()
 				.then(function(devices) {
@@ -40,7 +48,17 @@
 					alert('Camera settings saved!');
 				}
 			});
+
+			$saveButton.on('click', function() {
+				const number = $numberInput.val();
+				localStorage.setItem('savedNumber', number);
+				alert(`Number ${number} has been saved to local storage!`);
+			});
 		});
+
+
+
+
     </script>
 </body>
 </html>
