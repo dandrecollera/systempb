@@ -1,5 +1,5 @@
-<nav class="navbar bg-body-tertiary">
-    <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1">Navbar</span>
+<nav class="navbar">
+    <div class="container-fluid w-auto pb-3">
+        <img src="./img/strip4maniniyotlgo.png" alt="" srcset="" style="max-width: 250px">
     </div>
 </nav>
